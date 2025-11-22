@@ -3,7 +3,7 @@
 export const API_BASE_URL = 'https://api.example.com';
 
 // Toggle this to bypass API calls and use dummy data
-export const BYPASS_AUTH = true;
+export const BYPASS_AUTH = false;
 export const USE_DUMMY_DATA = true;
 
 export const COLORS = {

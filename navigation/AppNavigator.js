@@ -1,6 +1,6 @@
 // src/navigation/AppNavigator.js
 import React, { useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+// Remove NavigationContainer import - Expo Router provides it
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -87,9 +87,6 @@ export default function AppNavigator() {
     return null;
   }
 
-  return (
-    <NavigationContainer>
-      {(user || BYPASS_AUTH) ? <MainStack /> : <AuthStack />}
-    </NavigationContainer>
-  );
+  // Remove NavigationContainer wrapper - Expo Router provides it
+  return (user || BYPASS_AUTH) ? <MainStack /> : <AuthStack />;
 }

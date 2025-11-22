@@ -1,8 +1,17 @@
 // src/context/AppContext.js
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { getToken, saveToken, removeToken } from '../utils/storage';
 
 export const AppContext = createContext();
+
+// Add this custom hook
+export function useApp() {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useApp must be used within AppProvider');
+  }
+  return context;
+}
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null);
