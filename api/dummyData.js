@@ -1,110 +1,134 @@
-// src/api/dummyData.js
-
-export default {
+const dummyData = {
   '/products': [
     {
       id: 'p1',
-      name: 'Classic Cotton T-Shirt',
-      price: 299,
-      image: 'https://via.placeholder.com/300x300/FF6B6B/FFFFFF?text=T-Shirt',
-      category: 'men'
+      name: 'Premium Wireless Headphones',
+      price: 2999,
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop',
+      description: 'High-quality wireless headphones with noise cancellation and premium sound quality.',
+      stock: 15,
     },
     {
       id: 'p2',
-      name: 'Coffee Mug',
-      price: 199,
-      image: 'https://via.placeholder.com/300x300/4ECDC4/FFFFFF?text=Mug',
-      category: 'home'
+      name: 'Smart Watch Pro',
+      price: 4499,
+      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=500&fit=crop',
+      description: 'Advanced smartwatch with fitness tracking, heart rate monitor, and notification alerts.',
+      stock: 8,
     },
     {
       id: 'p3',
-      name: 'Denim Jacket',
+      name: 'Laptop Stand Aluminum',
       price: 1299,
-      image: 'https://via.placeholder.com/300x300/95E1D3/FFFFFF?text=Jacket',
-      category: 'men'
+      image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500&h=500&fit=crop',
+      description: 'Ergonomic aluminum laptop stand for better posture and airflow.',
+      stock: 25,
     },
     {
       id: 'p4',
-      name: 'Running Shoes',
-      price: 2499,
-      image: 'https://via.placeholder.com/300x300/F38181/FFFFFF?text=Shoes',
-      category: 'sports'
+      name: 'Mechanical Keyboard RGB',
+      price: 3799,
+      image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=500&h=500&fit=crop',
+      description: 'Premium mechanical keyboard with customizable RGB lighting and tactile switches.',
+      stock: 12,
     },
     {
       id: 'p5',
-      name: 'Backpack',
+      name: 'Wireless Mouse',
       price: 899,
-      image: 'https://via.placeholder.com/300x300/AA96DA/FFFFFF?text=Backpack',
-      category: 'accessories'
+      image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=500&h=500&fit=crop',
+      description: 'Ergonomic wireless mouse with precision tracking and long battery life.',
+      stock: 30,
     },
     {
       id: 'p6',
-      name: 'Watch',
-      price: 3999,
-      image: 'https://via.placeholder.com/300x300/FCBAD3/FFFFFF?text=Watch',
-      category: 'accessories'
-    }
-  ],
-
-  '/products/p1': {
-    id: 'p1',
-    name: 'Classic Cotton T-Shirt',
-    price: 299,
-    image: 'https://via.placeholder.com/300x300/FF6B6B/FFFFFF?text=T-Shirt',
-    description: 'Premium soft cotton t-shirt. Perfect for everyday wear. Breathable and comfortable fabric.',
-    stock: 10,
-    category: 'men'
-  },
-
-  '/products/p2': {
-    id: 'p2',
-    name: 'Coffee Mug',
-    price: 199,
-    image: 'https://via.placeholder.com/300x300/4ECDC4/FFFFFF?text=Mug',
-    description: 'Ceramic coffee mug with ergonomic handle. Holds 350ml. Microwave safe.',
-    stock: 25,
-    category: 'home'
-  },
-
-  '/products/p3': {
-    id: 'p3',
-    name: 'Denim Jacket',
-    price: 1299,
-    image: 'https://via.placeholder.com/300x300/95E1D3/FFFFFF?text=Jacket',
-    description: 'Classic denim jacket with button closure. Multiple pockets. Durable and stylish.',
-    stock: 8,
-    category: 'men'
-  },
-
-  '/cart/u123': [
-    {
-      productId: 'p1',
-      name: 'Classic Cotton T-Shirt',
-      price: 299,
-      qty: 1,
-      image: 'https://via.placeholder.com/300x300/FF6B6B/FFFFFF?text=T-Shirt'
-    }
-  ],
-
-  '/orders/u123': [
-    {
-      orderId: 'o1',
-      total: 598,
-      date: '2025-01-15',
-      status: 'Delivered',
-      items: [
-        { name: 'Classic Cotton T-Shirt', qty: 2, price: 299 }
-      ]
+      name: 'USB-C Hub Multiport',
+      price: 1599,
+      image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=500&h=500&fit=crop',
+      description: '7-in-1 USB-C hub with HDMI, USB 3.0, SD card reader, and more.',
+      stock: 18,
     },
     {
-      orderId: 'o2',
-      total: 1498,
-      date: '2025-01-10',
-      status: 'Shipped',
-      items: [
-        { name: 'Denim Jacket', qty: 1, price: 1299 },
-        { name: 'Coffee Mug', qty: 1, price: 199 }
-      ]
-    }
-  ]
+      id: 'p7',
+      name: 'Portable SSD 1TB',
+      price: 5499,
+      image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500&h=500&fit=crop',
+      description: 'Ultra-fast portable SSD with 1TB storage and USB-C connectivity.',
+      stock: 10,
+    },
+    {
+      id: 'p8',
+      name: 'Webcam HD 1080p',
+      price: 2199,
+      image: 'https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=500&h=500&fit=crop',
+      description: 'Full HD webcam with autofocus and built-in microphone for video calls.',
+      stock: 20,
+    },
+  ],
+  '/products/p1': {
+    id: 'p1',
+    name: 'Premium Wireless Headphones',
+    price: 2999,
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop',
+    description: 'High-quality wireless headphones with noise cancellation and premium sound quality.',
+    stock: 15,
+  },
+  '/products/p2': {
+    id: 'p2',
+    name: 'Smart Watch Pro',
+    price: 4499,
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=500&fit=crop',
+    description: 'Advanced smartwatch with fitness tracking, heart rate monitor, and notification alerts.',
+    stock: 8,
+  },
+  '/products/p3': {
+    id: 'p3',
+    name: 'Laptop Stand Aluminum',
+    price: 1299,
+    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500&h=500&fit=crop',
+    description: 'Ergonomic aluminum laptop stand for better posture and airflow.',
+    stock: 25,
+  },
+  '/products/p4': {
+    id: 'p4',
+    name: 'Mechanical Keyboard RGB',
+    price: 3799,
+    image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=500&h=500&fit=crop',
+    description: 'Premium mechanical keyboard with customizable RGB lighting and tactile switches.',
+    stock: 12,
+  },
+  '/products/p5': {
+    id: 'p5',
+    name: 'Wireless Mouse',
+    price: 899,
+    image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=500&h=500&fit=crop',
+    description: 'Ergonomic wireless mouse with precision tracking and long battery life.',
+    stock: 30,
+  },
+  '/products/p6': {
+    id: 'p6',
+    name: 'USB-C Hub Multiport',
+    price: 1599,
+    image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=500&h=500&fit=crop',
+    description: '7-in-1 USB-C hub with HDMI, USB 3.0, SD card reader, and more.',
+    stock: 18,
+  },
+  '/products/p7': {
+    id: 'p7',
+    name: 'Portable SSD 1TB',
+    price: 5499,
+    image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500&h=500&fit=crop',
+    description: 'Ultra-fast portable SSD with 1TB storage and USB-C connectivity.',
+    stock: 10,
+  },
+  '/products/p8': {
+    id: 'p8',
+    name: 'Webcam HD 1080p',
+    price: 2199,
+    image: 'https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=500&h=500&fit=crop',
+    description: 'Full HD webcam with autofocus and built-in microphone for video calls.',
+    stock: 20,
+  },
 };
+
+export default dummyData;

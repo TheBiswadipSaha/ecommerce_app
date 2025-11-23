@@ -1,9 +1,8 @@
-// src/components/Header.js
 import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppContext } from '../context/AppContext';
-import { COLORS, SPACING, FONT_SIZE } from '../config/constants';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../config/constants';
 
 export default function Header({ 
   title, 
@@ -22,11 +21,15 @@ export default function Header({
     <View style={styles.container}>
       <View style={styles.leftSection}>
         {showBack && (
-          <TouchableOpacity onPress={onBackPress} style={styles.iconButton}>
+          <TouchableOpacity 
+            onPress={onBackPress} 
+            style={styles.backButton}
+            activeOpacity={0.7}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.text} />
           </TouchableOpacity>
         )}
-        <View>
+        <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
           {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
         </View>
@@ -34,7 +37,11 @@ export default function Header({
 
       <View style={styles.rightSection}>
         {showCart && (
-          <TouchableOpacity onPress={onCartPress} style={styles.iconButton}>
+          <TouchableOpacity 
+            onPress={onCartPress} 
+            style={styles.iconButton}
+            activeOpacity={0.7}
+          >
             <Ionicons name="cart-outline" size={24} color={COLORS.text} />
             {cartItemCount > 0 && (
               <View style={styles.badge}>
@@ -45,12 +52,18 @@ export default function Header({
         )}
 
         {showProfile && (
-          <TouchableOpacity onPress={onProfilePress} style={styles.iconButton}>
-            <Ionicons 
-              name={user ? "person" : "person-outline"} 
-              size={24} 
-              color={COLORS.text} 
-            />
+          <TouchableOpacity 
+            onPress={onProfilePress} 
+            style={styles.iconButton}
+            activeOpacity={0.7}
+          >
+            <View style={styles.profileIcon}>
+              <Ionicons 
+                name={user ? "person" : "person-outline"} 
+                size={20} 
+                color={COLORS.primary} 
+              />
+            </View>
           </TouchableOpacity>
         )}
       </View>
@@ -67,16 +80,24 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: COLORS.borderLight,
   },
   leftSection: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
+  titleContainer: {
+    flex: 1,
+  },
+  backButton: {
+    marginRight: SPACING.md,
+    padding: SPACING.xs,
+  },
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: SPACING.sm,
   },
   title: {
     fontSize: FONT_SIZE.xl,
@@ -90,15 +111,22 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: SPACING.sm,
-    marginLeft: SPACING.sm,
     position: 'relative',
+  },
+  profileIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: BORDER_RADIUS.full,
+    backgroundColor: COLORS.borderLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
     top: 4,
     right: 4,
     backgroundColor: COLORS.primary,
-    borderRadius: 10,
+    borderRadius: BORDER_RADIUS.full,
     minWidth: 18,
     height: 18,
     justifyContent: 'center',

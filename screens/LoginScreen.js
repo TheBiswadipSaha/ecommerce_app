@@ -1,10 +1,9 @@
-// src/screens/LoginScreen.js
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { post } from '../api/api';
+import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { AppContext } from '../context/AppContext';
+import { getUsersDb } from '../utils/storage';
 import Button from '../components/Button';
-import { COLORS, SPACING, FONT_SIZE } from '../config/constants';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../config/constants';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -19,15 +18,25 @@ export default function LoginScreen({ navigation }) {
     }
 
     setLoading(true);
-    const response = await post('/auth/login', { email, password });
-    setLoading(false);
-
-    if (response.success) {
-      const { token, user } = response.data;
-      await login(user, token);
-    } else {
-      Alert.alert('Error', 'Invalid credentials. Please try again.');
+    
+    const usersDb = await getUsersDb();
+    const user = usersDb[email.toLowerCase()];
+    
+    if (!user) {
+      setLoading(false);
+      Alert.alert('Error', 'No account found with this email. Please register first.');
+      return;
     }
+    
+    if (user.password !== password) {
+      setLoading(false);
+      Alert.alert('Error', 'Incorrect password. Please try again.');
+      return;
+    }
+
+    const token = `token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    await login({ id: user.id, name: user.name, email: user.email }, token);
+    setLoading(false);
   };
 
   return (
@@ -36,29 +45,39 @@ export default function LoginScreen({ navigation }) {
       style={styles.container}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Login to your account</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>Sign in to continue shopping</Text>
+        </View>
 
         <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholderTextColor={COLORS.textMuted}
+            />
+          </View>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholderTextColor={COLORS.textMuted}
+            />
+          </View>
 
           <Button
-            title="Login"
+            title="Sign In"
             onPress={handleLogin}
             loading={loading}
             style={styles.button}
@@ -68,7 +87,7 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.link}>Register</Text>
+            <Text style={styles.link}>Sign Up</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -76,15 +95,18 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
   },
   content: {
     flex: 1,
-    padding: SPACING.lg,
+    padding: SPACING.xl,
     justifyContent: 'center',
+  },
+  header: {
+    marginBottom: SPACING.xxl,
   },
   title: {
     fontSize: 32,
@@ -95,19 +117,27 @@ const styles = {
   subtitle: {
     fontSize: FONT_SIZE.md,
     color: COLORS.textLight,
-    marginBottom: SPACING.xl,
   },
   form: {
+    marginBottom: SPACING.xl,
+  },
+  inputContainer: {
     marginBottom: SPACING.lg,
   },
+  label: {
+    fontSize: FONT_SIZE.sm,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
   input: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: COLORS.border,
-    borderRadius: 12,
+    borderRadius: BORDER_RADIUS.md,
     padding: SPACING.md,
     fontSize: FONT_SIZE.md,
     color: COLORS.text,
-    marginBottom: SPACING.md,
+    backgroundColor: COLORS.white,
   },
   button: {
     marginTop: SPACING.md,
@@ -124,6 +154,6 @@ const styles = {
   link: {
     fontSize: FONT_SIZE.md,
     color: COLORS.primary,
-    fontWeight: '600',
-  }
-};
+    fontWeight: '700',
+  },
+});

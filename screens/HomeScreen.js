@@ -1,10 +1,11 @@
-// src/screens/HomeScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { get } from '../api/api';
 import ProductCard from '../components/ProductCard';
 import Header from '../components/Header';
-import { COLORS, SPACING, FONT_SIZE } from '../config/constants';
+import { ProductCardSkeleton } from '../components/SkeletonLoader';
+import { COLORS, SPACING } from '../config/constants';
 
 export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
@@ -23,62 +24,75 @@ export default function HomeScreen({ navigation }) {
     setLoading(false);
   };
 
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
+  const renderSkeletons = () => (
+    <View style={styles.skeletonContainer}>
+      {[1, 2, 3, 4].map((item) => (
+        <View key={item} style={styles.skeletonWrapper}>
+          <ProductCardSkeleton />
+        </View>
+      ))}
+    </View>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Header 
         title="Shop" 
-        subtitle="Find your perfect items"
+        subtitle="Discover amazing products"
         showCart={true}
         showProfile={true}
         onCartPress={() => navigation.navigate('Cart')}
-        onProfilePress={() => navigation.navigate('Orders')}
+        onProfilePress={() => navigation.navigate('Profile')}
       />
 
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <View style={styles.cardWrapper}>
-            <ProductCard
-              product={item}
-              onPress={() => navigation.navigate('ProductDetail', { id: item.id })}
-            />
-          </View>
-        )}
-      />
+      {loading ? (
+        renderSkeletons()
+      ) : (
+        <FlatList
+          data={products}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.cardWrapper}>
+              <ProductCard
+                product={item}
+                onPress={() => navigation.navigate('ProductDetail', { id: item.id })}
+              />
+            </View>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   list: {
     padding: SPACING.md,
   },
   row: {
     justifyContent: 'space-between',
+    paddingHorizontal: SPACING.md,
   },
   cardWrapper: {
     flex: 1,
     maxWidth: '48%',
-  }
-};
+  },
+  skeletonContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: SPACING.md,
+    justifyContent: 'space-between',
+  },
+  skeletonWrapper: {
+    width: '48%',
+    marginBottom: SPACING.md,
+  },
+});

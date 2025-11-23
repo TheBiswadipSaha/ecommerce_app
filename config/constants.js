@@ -1,21 +1,26 @@
-// src/config/constants.js
-
-export const API_BASE_URL = 'https://api.example.com';
-
-// Toggle this to bypass API calls and use dummy data
+export const API_BASE_URL = '';
 export const BYPASS_AUTH = false;
-export const USE_DUMMY_DATA = true;
+export const dummy_data = true;
 
 export const COLORS = {
-  primary: '#FF6B6B',
-  secondary: '#4ECDC4',
-  background: '#F7F7F7',
+  primary: '#6366F1',
+  primaryDark: '#4F46E5',
+  primaryLight: '#818CF8',
+  secondary: '#10B981',
+  background: '#FFFFFF', // Back to white
+  cardBg: '#FFFFFF',
+  text: '#1F2937',
+  textLight: '#6B7280',
+  textMuted: '#9CA3AF',
+  border: '#E5E7EB',
+  borderLight: '#F3F4F6',
+  success: '#10B981',
+  error: '#EF4444',
+  warning: '#F59E0B',
   white: '#FFFFFF',
-  text: '#333333',
-  textLight: '#666666',
-  border: '#E0E0E0',
-  success: '#51CF66',
-  error: '#FF6B6B',
+  black: '#000000',
+  overlay: 'rgba(0, 0, 0, 0.5)',
+  shadow: 'rgba(0, 0, 0, 0.08)',
 };
 
 export const SPACING = {
@@ -24,12 +29,47 @@ export const SPACING = {
   md: 16,
   lg: 24,
   xl: 32,
+  xxl: 40,
 };
 
 export const FONT_SIZE = {
-  xs: 12,
-  sm: 14,
-  md: 16,
-  lg: 18,
-  xl: 24,
+  xs: 11,
+  sm: 13,
+  md: 15,
+  lg: 17,
+  xl: 20,
+  xxl: 24,
+  xxxl: 28,
+};
+
+export const BORDER_RADIUS = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  full: 999,
+};
+
+export const SHADOW = {
+  sm: {
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  md: {
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  lg: {
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 5,
+  },
 };

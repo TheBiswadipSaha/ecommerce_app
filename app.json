@@ -15,7 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ecommerce.app"
+      "bundleIdentifier": "com.ecommerce.app",
+      "infoPlist": {
+        "UIStatusBarStyle": "UIStatusBarStyleLightContent",
+        "UIViewControllerBasedStatusBarAppearance": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +27,11 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ecommerce.app"
+      "package": "com.ecommerce.app",
+      "statusBar": {
+        "barStyle": "light-content",
+        "backgroundColor": "#000000"
+      }
     },
     "web": {
       "bundler": "metro",

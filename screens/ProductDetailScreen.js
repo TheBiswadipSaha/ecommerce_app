@@ -1,10 +1,10 @@
-// src/screens/ProductDetailScreen.js
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Image, ScrollView, Alert, StyleSheet } from 'react-native';
 import { get } from '../api/api';
 import { AppContext } from '../context/AppContext';
 import Button from '../components/Button';
-import { COLORS, SPACING, FONT_SIZE } from '../config/constants';
+import { ProductDetailSkeleton } from '../components/SkeletonLoader';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../config/constants';
 
 export default function ProductDetailScreen({ route, navigation }) {
   const { id } = route.params;
@@ -27,24 +27,24 @@ export default function ProductDetailScreen({ route, navigation }) {
 
   const handleAddToCart = () => {
     addToCart(product);
-    Alert.alert('Success', 'Item added to cart', [
-      { text: 'Continue Shopping', style: 'cancel' },
-      { text: 'View Cart', onPress: () => navigation.navigate('HomeTabs', { screen: 'Cart' }) }
-    ]);
+    Alert.alert(
+      'Added to Cart', 
+      `${product.name} has been added to your cart.`,
+      [
+        { text: 'Continue Shopping', style: 'cancel' },
+        { text: 'View Cart', onPress: () => navigation.navigate('HomeTabs', { screen: 'Cart' }) }
+      ]
+    );
   };
 
   if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (!product) {
     return (
       <View style={styles.center}>
-        <Text>Product not found</Text>
+        <Text style={styles.errorText}>Product not found</Text>
       </View>
     );
   }
@@ -58,28 +58,38 @@ export default function ProductDetailScreen({ route, navigation }) {
         <Text style={styles.price}>₹{product.price}</Text>
         
         <View style={styles.section}>
-          <Text style={styles.label}>Description</Text>
+          <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description}>{product.description}</Text>
         </View>
         
         <View style={styles.section}>
-          <Text style={styles.label}>Stock</Text>
-          <Text style={styles.stock}>
-            {product.stock > 0 ? `${product.stock} items available` : 'Out of stock'}
-          </Text>
+          <Text style={styles.sectionTitle}>Availability</Text>
+          <View style={styles.stockRow}>
+            <View style={[
+              styles.stockDot, 
+              { backgroundColor: product.stock > 0 ? COLORS.success : COLORS.error }
+            ]} />
+            <Text style={[
+              styles.stock,
+              { color: product.stock > 0 ? COLORS.success : COLORS.error }
+            ]}>
+              {product.stock > 0 ? `${product.stock} items in stock` : 'Out of stock'}
+            </Text>
+          </View>
         </View>
         
         <Button
-          title="Add to Cart"
+          title={product.stock > 0 ? "Add to Cart" : "Out of Stock"}
           onPress={handleAddToCart}
           disabled={product.stock === 0}
+          style={styles.button}
         />
       </View>
     </ScrollView>
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
@@ -88,6 +98,11 @@ const styles = {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.white,
+  },
+  errorText: {
+    fontSize: FONT_SIZE.lg,
+    color: COLORS.textLight,
   },
   image: {
     width: '100%',
@@ -95,37 +110,52 @@ const styles = {
     resizeMode: 'cover',
   },
   content: {
-    padding: SPACING.lg,
+    padding: SPACING.xl,
   },
   name: {
-    fontSize: FONT_SIZE.xl,
+    fontSize: FONT_SIZE.xxl,
     fontWeight: '700',
     color: COLORS.text,
     marginBottom: SPACING.sm,
+    lineHeight: 34,
   },
   price: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
     color: COLORS.primary,
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   section: {
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
-  label: {
+  sectionTitle: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.textLight,
     textTransform: 'uppercase',
-    marginBottom: SPACING.xs,
+    letterSpacing: 0.5,
+    marginBottom: SPACING.sm,
   },
   description: {
     fontSize: FONT_SIZE.md,
     color: COLORS.text,
     lineHeight: 24,
   },
+  stockRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  stockDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: SPACING.sm,
+  },
   stock: {
     fontSize: FONT_SIZE.md,
-    color: COLORS.success,
-  }
-};
+    fontWeight: '600',
+  },
+  button: {
+    marginTop: SPACING.md,
+  },
+});

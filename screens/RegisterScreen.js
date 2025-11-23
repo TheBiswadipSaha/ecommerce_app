@@ -1,10 +1,9 @@
-// src/screens/RegisterScreen.js
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { post } from '../api/api';
+import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { AppContext } from '../context/AppContext';
+import { getUsersDb, saveUserToDb } from '../utils/storage';
 import Button from '../components/Button';
-import { COLORS, SPACING, FONT_SIZE } from '../config/constants';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../config/constants';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -24,16 +23,32 @@ export default function RegisterScreen({ navigation }) {
       return;
     }
 
+    const emailLower = email.toLowerCase();
+    
     setLoading(true);
-    const response = await post('/auth/register', { name, email, password });
-    setLoading(false);
-
-    if (response.success) {
-      const { token, userId } = response.data;
-      await login({ id: userId, name }, token);
-    } else {
-      Alert.alert('Error', 'Registration failed. Please try again.');
+    
+    const usersDb = await getUsersDb();
+    
+    if (usersDb[emailLower]) {
+      setLoading(false);
+      Alert.alert('Error', 'An account with this email already exists. Please login.');
+      return;
     }
+
+    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const userData = {
+      id: userId,
+      name: name.trim(),
+      email: emailLower,
+      password: password,
+    };
+
+    await saveUserToDb(userData);
+
+    const token = `token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    await login({ id: userId, name: userData.name, email: userData.email }, token);
+    
+    setLoading(false);
   };
 
   return (
@@ -42,36 +57,50 @@ export default function RegisterScreen({ navigation }) {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Sign up to start shopping</Text>
+        </View>
 
         <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Full Name"
-            value={name}
-            onChangeText={setName}
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Full Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your name"
+              value={name}
+              onChangeText={setName}
+              placeholderTextColor={COLORS.textMuted}
+            />
+          </View>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholderTextColor={COLORS.textMuted}
+            />
+          </View>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Password (min 6 characters)"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Minimum 6 characters"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholderTextColor={COLORS.textMuted}
+            />
+          </View>
 
           <Button
-            title="Register"
+            title="Create Account"
             onPress={handleRegister}
             loading={loading}
             style={styles.button}
@@ -81,7 +110,7 @@ export default function RegisterScreen({ navigation }) {
         <View style={styles.footer}>
           <Text style={styles.footerText}>Already have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.link}>Login</Text>
+            <Text style={styles.link}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -89,15 +118,18 @@ export default function RegisterScreen({ navigation }) {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white,
   },
   content: {
     flexGrow: 1,
-    padding: SPACING.lg,
+    padding: SPACING.xl,
     justifyContent: 'center',
+  },
+  header: {
+    marginBottom: SPACING.xxl,
   },
   title: {
     fontSize: 32,
@@ -108,19 +140,27 @@ const styles = {
   subtitle: {
     fontSize: FONT_SIZE.md,
     color: COLORS.textLight,
-    marginBottom: SPACING.xl,
   },
   form: {
+    marginBottom: SPACING.xl,
+  },
+  inputContainer: {
     marginBottom: SPACING.lg,
   },
+  label: {
+    fontSize: FONT_SIZE.sm,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
   input: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: COLORS.border,
-    borderRadius: 12,
+    borderRadius: BORDER_RADIUS.md,
     padding: SPACING.md,
     fontSize: FONT_SIZE.md,
     color: COLORS.text,
-    marginBottom: SPACING.md,
+    backgroundColor: COLORS.white,
   },
   button: {
     marginTop: SPACING.md,
@@ -137,6 +177,6 @@ const styles = {
   link: {
     fontSize: FONT_SIZE.md,
     color: COLORS.primary,
-    fontWeight: '600',
-  }
-};
+    fontWeight: '700',
+  },
+});

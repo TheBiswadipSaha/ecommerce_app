@@ -1,173 +1,112 @@
-// src/screens/OrdersScreen.js
-import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
-import { get } from '../api/api';
+import React, { useContext } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { AppContext } from '../context/AppContext';
 import Header from '../components/Header';
-import { COLORS, SPACING, FONT_SIZE } from '../config/constants';
+import Button from '../components/Button';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOW } from '../config/constants';
 
-function OrderCard({ order }) {
+function OrderCard({ order, onPress }) {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.cardHeader}>
-        <View>
+        <View style={styles.headerLeft}>
           <Text style={styles.orderId}>Order #{order.orderId}</Text>
           <Text style={styles.date}>{order.date}</Text>
         </View>
-        <Text style={styles.status}>{order.status || 'Processing'}</Text>
+        <View style={styles.statusBadge}>
+          <Text style={styles.statusText}>{order.status || 'Processing'}</Text>
+        </View>
       </View>
       
       <View style={styles.divider} />
       
       <View style={styles.items}>
         {order.items.map((item, index) => (
-          <Text key={index} style={styles.itemText}>
-            • {item.name} x {item.qty}
-          </Text>
+          <View key={index} style={styles.itemRow}>
+            <View style={styles.itemDot} />
+            <Text style={styles.itemText}>
+              {item.name} × {item.qty}
+            </Text>
+          </View>
         ))}
       </View>
       
       <View style={styles.totalRow}>
-        <Text style={styles.totalLabel}>Total</Text>
+        <Text style={styles.totalLabel}>Total Amount</Text>
         <Text style={styles.totalAmount}>₹{order.total}</Text>
       </View>
-    </View>
+      
+      <View style={styles.viewDetails}>
+        <Text style={styles.viewDetailsText}>View Details</Text>
+        <Ionicons name="chevron-forward" size={16} color={COLORS.primary} />
+      </View>
+    </TouchableOpacity>
   );
 }
 
-export default function OrdersScreen() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useContext(AppContext);
-
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
-  const loadOrders = async () => {
-    setLoading(true);
-    const userId = user?.id || 'u123';
-    const response = await get(`/orders/${userId}`);
-    if (response.success) {
-      setOrders(response.data || []);
-    }
-    setLoading(false);
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
+export default function OrdersScreen({ navigation }) {
+  const { orders, user } = useContext(AppContext);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header 
-        title="My Orders" 
-        subtitle={`${orders.length} ${orders.length === 1 ? 'order' : 'orders'}`}
-      />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <Header title="My Orders" subtitle={user ? `Hi, ${user.name}` : 'Guest'} />
 
       {orders.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyText}>No orders yet</Text>
+          <View style={styles.emptyIcon}>
+            <Ionicons name="receipt-outline" size={80} color={COLORS.border} />
+          </View>
+          <Text style={styles.emptyTitle}>No orders yet</Text>
+          <Text style={styles.emptyText}>Start shopping to see your orders here</Text>
+          <Button
+            title="Start Shopping"
+            onPress={() => navigation.navigate('Home')}
+            style={styles.emptyButton}
+          />
         </View>
       ) : (
         <FlatList
           data={orders}
           keyExtractor={(item) => item.orderId}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => <OrderCard order={item} />}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <OrderCard 
+              order={item} 
+              onPress={() => navigation.navigate('OrderDetail', { order: item })} 
+            />
+          )}
         />
       )}
     </SafeAreaView>
   );
 }
 
-const styles = {
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  list: {
-    padding: SPACING.md,
-  },
-  empty: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: FONT_SIZE.lg,
-    color: COLORS.textLight,
-  },
-  card: {
-    backgroundColor: COLORS.white,
-    padding: SPACING.lg,
-    borderRadius: 12,
-    marginBottom: SPACING.md,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  orderId: {
-    fontSize: FONT_SIZE.md,
-    fontWeight: '700',
-    color: COLORS.text,
-    marginBottom: SPACING.xs,
-  },
-  date: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.textLight,
-  },
-  status: {
-    fontSize: FONT_SIZE.sm,
-    fontWeight: '600',
-    color: COLORS.success,
-    backgroundColor: '#E8F5E9',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-    borderRadius: 8,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.border,
-    marginVertical: SPACING.md,
-  },
-  items: {
-    marginBottom: SPACING.md,
-  },
-  itemText: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.text,
-    marginBottom: SPACING.xs,
-  },
-  totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  totalLabel: {
-    fontSize: FONT_SIZE.md,
-    fontWeight: '600',
-    color: COLORS.text,
-  },
-  totalAmount: {
-    fontSize: FONT_SIZE.lg,
-    fontWeight: '700',
-    color: COLORS.primary,
-  }
-};
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: COLORS.background },
+  list: { padding: SPACING.md },
+  empty: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: SPACING.xl },
+  emptyIcon: { marginBottom: SPACING.lg },
+  emptyTitle: { fontSize: FONT_SIZE.xl, fontWeight: '700', color: COLORS.text, marginBottom: SPACING.xs },
+  emptyText: { fontSize: FONT_SIZE.md, color: COLORS.textLight, marginBottom: SPACING.xl, textAlign: 'center' },
+  emptyButton: { minWidth: 200 },
+  card: { backgroundColor: COLORS.white, padding: SPACING.lg, borderRadius: BORDER_RADIUS.lg, marginBottom: SPACING.md, ...SHADOW.md },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  headerLeft: { flex: 1 },
+  orderId: { fontSize: FONT_SIZE.md, fontWeight: '700', color: COLORS.text, marginBottom: SPACING.xs },
+  date: { fontSize: FONT_SIZE.sm, color: COLORS.textLight },
+  statusBadge: { backgroundColor: '#E8F5E9', paddingHorizontal: SPACING.md, paddingVertical: SPACING.xs, borderRadius: BORDER_RADIUS.md },
+  statusText: { fontSize: FONT_SIZE.sm, fontWeight: '600', color: COLORS.success },
+  divider: { height: 1, backgroundColor: COLORS.border, marginVertical: SPACING.md },
+  items: { marginBottom: SPACING.md },
+  itemRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.xs },
+  itemDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: COLORS.primary, marginRight: SPACING.sm },
+  itemText: { fontSize: FONT_SIZE.sm, color: COLORS.text, flex: 1 },
+  totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.sm },
+  totalLabel: { fontSize: FONT_SIZE.md, fontWeight: '600', color: COLORS.textLight },
+  totalAmount: { fontSize: FONT_SIZE.lg, fontWeight: '700', color: COLORS.primary },
+  viewDetails: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: SPACING.sm, borderTopWidth: 1, borderTopColor: COLORS.borderLight },
+  viewDetailsText: { fontSize: FONT_SIZE.sm, fontWeight: '600', color: COLORS.primary, marginRight: SPACING.xs },
+});

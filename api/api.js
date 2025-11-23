@@ -1,6 +1,5 @@
-// src/api/api.js
 import axios from 'axios';
-import { API_BASE_URL, USE_DUMMY_DATA } from '../config/constants';
+import { API_BASE_URL, dummy_data } from '../config/constants';
 import dummyData from './dummyData';
 
 const api = axios.create({
@@ -11,16 +10,14 @@ const api = axios.create({
   }
 });
 
-// Helper to get dummy data
 const getDummy = (endpoint) => {
   const key = endpoint.split('?')[0];
   return dummyData[key] || null;
 };
 
-// GET request
 export const get = async (endpoint, options = {}) => {
-  if (USE_DUMMY_DATA) {
-    await new Promise(resolve => setTimeout(resolve, 300));
+  if (dummy_data) {
+    await new Promise(resolve => setTimeout(resolve, 500));
     const data = getDummy(endpoint);
     return { success: true, data };
   }
@@ -38,10 +35,9 @@ export const get = async (endpoint, options = {}) => {
   }
 };
 
-// POST request
 export const post = async (endpoint, body = {}) => {
-  if (USE_DUMMY_DATA) {
-    await new Promise(resolve => setTimeout(resolve, 300));
+  if (dummy_data) {
+    await new Promise(resolve => setTimeout(resolve, 500));
     return {
       success: true,
       data: { message: 'Success', ...body }
@@ -57,10 +53,9 @@ export const post = async (endpoint, body = {}) => {
   }
 };
 
-// PUT request
 export const put = async (endpoint, body = {}) => {
-  if (USE_DUMMY_DATA) {
-    await new Promise(resolve => setTimeout(resolve, 300));
+  if (dummy_data) {
+    await new Promise(resolve => setTimeout(resolve, 500));
     return { success: true, data: { message: 'Updated' } };
   }
 
@@ -73,10 +68,9 @@ export const put = async (endpoint, body = {}) => {
   }
 };
 
-// DELETE request
 export const del = async (endpoint) => {
-  if (USE_DUMMY_DATA) {
-    await new Promise(resolve => setTimeout(resolve, 300));
+  if (dummy_data) {
+    await new Promise(resolve => setTimeout(resolve, 500));
     return { success: true, data: { message: 'Deleted' } };
   }
 

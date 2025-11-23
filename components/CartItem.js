@@ -1,8 +1,7 @@
-// src/components/CartItem.js
 import React from 'react';
-import { View, Image, Text, TouchableOpacity } from 'react-native';
+import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, FONT_SIZE } from '../config/constants';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOW } from '../config/constants';
 
 export default function CartItem({ item, onUpdateQty, onRemove }) {
   return (
@@ -18,8 +17,9 @@ export default function CartItem({ item, onUpdateQty, onRemove }) {
           <TouchableOpacity 
             onPress={() => onUpdateQty(item.productId, item.qty - 1)}
             style={styles.qtyButton}
+            activeOpacity={0.7}
           >
-            <Ionicons name="remove" size={20} color={COLORS.text} />
+            <Ionicons name="remove" size={18} color={COLORS.text} />
           </TouchableOpacity>
           
           <Text style={styles.qty}>{item.qty}</Text>
@@ -27,8 +27,9 @@ export default function CartItem({ item, onUpdateQty, onRemove }) {
           <TouchableOpacity 
             onPress={() => onUpdateQty(item.productId, item.qty + 1)}
             style={styles.qtyButton}
+            activeOpacity={0.7}
           >
-            <Ionicons name="add" size={20} color={COLORS.text} />
+            <Ionicons name="add" size={18} color={COLORS.text} />
           </TouchableOpacity>
         </View>
       </View>
@@ -36,30 +37,27 @@ export default function CartItem({ item, onUpdateQty, onRemove }) {
       <TouchableOpacity 
         onPress={() => onRemove(item.productId)}
         style={styles.removeButton}
+        activeOpacity={0.7}
       >
-        <Ionicons name="trash-outline" size={24} color={COLORS.error} />
+        <Ionicons name="trash-outline" size={22} color={COLORS.error} />
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: COLORS.white,
     padding: SPACING.md,
-    borderRadius: 12,
+    borderRadius: BORDER_RADIUS.lg,
     marginBottom: SPACING.md,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    ...SHADOW.sm,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
+    width: 90,
+    height: 90,
+    borderRadius: BORDER_RADIUS.md,
   },
   details: {
     flex: 1,
@@ -70,6 +68,7 @@ const styles = {
     fontSize: FONT_SIZE.md,
     fontWeight: '600',
     color: COLORS.text,
+    lineHeight: 20,
   },
   price: {
     fontSize: FONT_SIZE.md,
@@ -79,13 +78,12 @@ const styles = {
   qtyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: SPACING.xs,
   },
   qtyButton: {
     width: 32,
     height: 32,
-    borderRadius: 8,
-    backgroundColor: COLORS.background,
+    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: COLORS.borderLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -94,9 +92,11 @@ const styles = {
     fontSize: FONT_SIZE.md,
     fontWeight: '600',
     color: COLORS.text,
+    minWidth: 30,
+    textAlign: 'center',
   },
   removeButton: {
     justifyContent: 'center',
     paddingLeft: SPACING.sm,
-  }
-};
+  },
+});
